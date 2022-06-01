@@ -1,3 +1,3 @@
-import Greeter from "./Greeter";
+import AnalysisToolComponent from "./AnalysisTool/AnalysisToolComponent";
 
-export default Greeter;
+export default AnalysisToolComponent;

@@ -1,0 +1,894 @@
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Analysis Tool
+* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
+/* ********************************************************
+**    HTML5 Analysis controls **
+********************************************************* */
+.analysisControl {
+	position: relative;
+	margin: 0px auto;
+	text-align: left;
+}
+
+.analysisControl[view=fullscreen] {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%; /* (overruled by resizeTool function) */
+	height: 100%;
+	background-color: #000;
+}
+
+.ac-video-controls-single {
+	height: 28px;
+	margin-top: 8px;
+}
+
+.ac-drawing-controls {
+	position: relative;
+	height: 28px;
+}
+
+video.ac-video-single {
+	position: absolute;
+}
+
+img.ac-video-single-static {
+	position: absolute;
+}
+
+canvas.ac-canvas-draw,
+canvas.ac-canvas-scratch,
+.ac-webgl-container,
+.ac-webgl-container canvas {
+	position: absolute;
+	left: 0;
+	top: 0;
+}
+
+	canvas.ac-canvas-scratch[tool-name="Freeline"],
+	canvas.ac-canvas-scratch[tool-name="Dot"] {
+		cursor: pointer;
+	}
+
+	canvas.ac-canvas-scratch[tool-name="Line"],
+	canvas.ac-canvas-scratch[tool-name="LineV"],
+	canvas.ac-canvas-scratch[tool-name="LineH"],
+	canvas.ac-canvas-scratch[tool-name="Circle"],
+	canvas.ac-canvas-scratch[tool-name="Rect"],
+	canvas.ac-canvas-scratch[tool-name="Arrow"],
+	canvas.ac-canvas-scratch[tool-name="Angle"],
+	canvas.ac-canvas-scratch[tool-name="AngleV"],
+	canvas.ac-canvas-scratch[tool-name="AngleH"],
+	canvas.ac-canvas-scratch[tool-name="Ellipse"],
+	canvas.ac-canvas-scratch[tool-name="Speed"],
+	canvas.ac-canvas-scratch[tool-name="Cal"] {
+		cursor: crosshair;
+	}
+	canvas.ac-canvas-scratch[tool-name="Text"] {
+		cursor: text;
+	}
+
+
+.ac-capturingMsg {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.4);
+}
+
+.ac-capturingMsg-msg {
+	width: 200px;
+	margin: 35% auto 0 auto;
+	padding: 8px;
+	color: black;
+	background-color: #a8d659;
+	border-radius: 10px;
+	box-shadow: 0px 1px 30px #CCC;
+}
+
+.ac-cmask {
+	position: absolute;
+	display: none;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0,0,0,0.75);
+}
+
+/* -----------------------
+* DUAL
+* ----------------------*/
+.ac-views-bar {
+	height: 28px;
+}
+
+.ac-video-controls {
+	margin-top: 8px;
+	height: 28px;
+}
+
+.ac-playertocontrol-bar {
+	display: inline;
+	margin-right: 29px;
+}
+
+/*
+* Align mode
+*/
+
+.analysisControl .ac-bothvideo-controls {
+	display: inline;
+}
+
+.analysisControl[align-mode=draw] .ac-button-drawmode,
+.analysisControl[align-mode=align] .ac-button-alignmode {
+	display: none;
+}
+
+.analysisControl[align-mode=align] canvas.ac-canvas-draw,
+.analysisControl[align-mode=align] canvas.ac-canvas-scratch,
+.analysisControl[align-mode=align] .bar-two,
+.analysisControl[align-mode=align] .ac-draw-controls .ac-drawing-controls,
+.analysisControl[align-mode=align] .ac-video-controls .ac-bothvideo-controls {
+	display: none;
+}
+
+.analysisControl .ac-draw-controls .ac-views-bar,
+.analysisControl .ac-video-controls .ac-playertocontrol-bar,
+.analysisControl .ac-video-controls .ac-leftvideo-controls,
+.analysisControl .ac-video-controls .ac-rightvideo-controls {
+	display: none;
+}
+
+.analysisControl[align-mode=align] .ac-draw-controls .ac-views-bar,
+.analysisControl[align-mode=align] .ac-video-controls .ac-playertocontrol-bar,
+.analysisControl[align-mode=align][sync-panel=left] .ac-video-controls .ac-leftvideo-controls,
+.analysisControl[align-mode=align][sync-panel=right] .ac-video-controls .ac-rightvideo-controls,
+.analysisControl[align-mode=align][sync-panel=both] .ac-video-controls .ac-bothvideo-controls {
+	display: inline;
+}
+
+.analysisControl[align-mode=align][sync-panel=right] .ac-viewleft,
+.analysisControl[align-mode=align][sync-panel=left] .ac-viewright {
+	opacity: 0.3;
+}
+
+.ac-viewwrapper {
+	position: relative;
+	overflow: hidden;
+	clear: both;
+}
+
+.analysisControl[data-auto-height="true"] video.ac-video-single {
+	position: relative;
+}
+
+/*
+* I'm not sure why these buttons are hidden with auto-height videos...?
+.analysisControl[data-auto-height="true"] .ac-video-controls-single .ac-drawbar-divider,
+.analysisControl[data-auto-height="true"] .ac-drawbar-actions .ac-drawbar-divider:nth-child(2),
+.analysisControl[data-auto-height="true"] button[tool="More"],
+.analysisControl[data-auto-height="true"] button[t="adva"],
+.analysisControl[data-auto-height="true"] button[t="sbwd"],
+.analysisControl[data-auto-height="true"] button[t="sfwd"],
+.analysisControl[data-auto-height="true"] button[t="full"] {
+	display: none;
+}
+
+.analysisControl[data-auto-height="true"] .ac-video-controls-single .ac-timeline-container {
+	margin-left: 32px;
+	margin-right: 0;
+}
+*/
+
+.analysisControl[data-auto-height="true"][analysis-type="single"][data-analysis-media="Image"] img.ac-video-single-static {
+	position: relative;
+}
+
+.analysisControl[view="fullscreen"] .ac-viewwrapper {
+	margin: 0 auto;
+}
+.analysisControl[view="fullscreen"] {
+	z-index: 1;
+}
+
+/*
+*  Layout modes in Stylesheet
+*  Although the tool can calculate the position of view
+*  and video panels, some browsers do not update the
+*  positions correctly. We can use the styles here to
+*  position the view panels instead.
+*/
+/* Defaults, overwritten in Javascript if needed */
+.ac-viewwrapper .ac-viewleft,
+.ac-viewwrapper .ac-viewright {
+	position: relative;
+	float: left;
+	width: 50%;
+	height: 100%;
+	overflow: hidden;
+}
+
+.ac-video-left,
+.ac-video-right {
+	position: absolute;
+}
+
+img.ac-video-left-static,
+img.ac-video-right-static {
+	position: absolute;
+}
+
+
+/* Top-bottom */
+.ac-viewwrapper[view=topbottom] .ac-viewleft,
+.ac-viewwrapper[view=topbottom] .ac-viewright {
+	clear: both;
+	height: 50%;
+	width: 100%;
+}
+
+/* Third-left */
+.ac-viewwrapper[view=thirdleft] .ac-viewleft {
+	width: 33%;
+}
+
+.ac-viewwrapper[view=thirdleft] .ac-viewright {
+	width: 67%;
+}
+
+/* Picture-in-picture */
+.ac-viewwrapper[view=pictureinpicture] .ac-viewleft {
+	width: 100%;
+	height: 100%;
+}
+.ac-viewwrapper[view=pictureinpicture] .ac-viewright {
+	position: absolute;
+	left: 63%;
+	top: 2%;
+	width: 35%;
+	height: 35%;
+}
+
+.ac-imagepreview {
+	position: absolute;
+	left: 0;
+	top: 0;
+}
+
+.ac-lineWidth-palette {
+	z-index: 200;
+}
+
+.ac-colorPicker-palette {
+	z-index: 200;
+}
+
+video[flip=true],
+img[flip=true] {
+	-moz-transform: scaleX(-1);
+	-o-transform: scaleX(-1);
+	-webkit-transform: scaleX(-1);
+	transform: scaleX(-1);
+	filter: FlipH;
+	-ms-filter: "FlipH";
+}
+
+/* Play / pause / download */
+.analysisControl .ac-button-playpause,
+.analysisControl .ac-button-pause,
+.analysisControl .ac-button-download {
+	display: none;
+}
+
+.analysisControl[state=wait] .ac-button-download,
+.analysisControl[state=pause] .ac-button-playpause,
+.analysisControl[state=play] .ac-button-pause {
+	display: inline-block;
+}
+
+ /* Fullscreen */
+.analysisControl[view=fullscreen] .ac-button-restorescreen {
+	display: inline-block;
+}
+
+.analysisControl .ac-button-restorescreen,
+.analysisControl[view=fullscreen] .ac-button-fullscreen {
+	display: none;
+}
+
+/* ---------------------------------------------
+* Timeline button addendum
+* ------------------------------------------- */
+
+.ac-video-buttons-left {
+	float: left;
+}
+.ac-video-buttons-right {
+	float: right;
+}
+
+/* ---------------------------------------------
+* Timeline (replaces slider)
+* ------------------------------------------- */
+
+.ac-timeline-container {
+	margin-left: 60px;
+	margin-right: 90px;
+	text-align: initial;
+}
+
+.analysisControl .ac-leftvideo-controls .ac-timeline-container,
+.analysisControl .ac-rightvideo-controls .ac-timeline-container {
+	margin-left: 40px;
+}
+
+	.ac-timeline-container .ac-timeline-trough {
+		position: relative;
+		top: 10px;
+		height: 4px;
+		margin: 0 28px;
+		border-radius: 3px;
+		background: #5d6368;
+		background: linear-gradient(to bottom, #6c7276 0%, #4f565b 100%);
+		border-top: 1px solid #1b1d1e;
+		border-bottom: 1px solid #bfbfbf;
+	}
+
+	/* Download progress and listeners */
+	.ac-timeline-container .ac-timeline-progress {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+	}
+
+		.ac-timeline-container .ac-timeline-progress .listener {
+			position: absolute;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+		}
+
+			.ac-timeline-container .ac-timeline-progress .listener[media-type=img] {
+				display: none;
+			}
+
+			.ac-timeline-container .ac-timeline-progress .listener[status=error] {
+				background: #C46969;
+			}
+
+	.ac-timeline-container[disabled=disabled] .ac-timeline-progress {
+		visibility: hidden;
+	}
+
+	.ac-timeline-container[disabled=disabled] .ac-timeline-thumb,
+	.ac-timeline-container[disabled=disabled] .ac-timeline-selection {
+		display: none;
+	}
+
+	.ac-leftvideo-controls .ac-timeline-container .ac-timeline-selection,
+	.ac-rightvideo-controls .ac-timeline-container .ac-timeline-selection {
+		display: none;
+	}
+
+	/* Highlight sections */
+	.ac-timeline-container .ac-timeline-highlights {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		overflow: hidden;
+		pointer-events: none;
+	}
+	.ac-timeline-container .ac-timeline-highlight {
+		position: absolute;
+	}
+		.ac-timeline-container .ac-timeline-highlight[highlight-type="position"] {
+			top: 0;
+			height: 100%;
+			margin-left: -1px;
+			border-left: 1px solid #eba90c;
+		}
+		.ac-timeline-container .ac-timeline-highlight[highlight-type="selection"] {
+			bottom: 20%;
+			border-bottom: 2px solid #eba90c;
+		}
+
+	/* Playhead */
+	.ac-timeline-container .ac-timeline-thumb {
+		position: absolute;
+		top: -16px;
+		width: 24px;
+		height: 40px;
+		margin-left: -12px;
+		background-position: -24px;
+		cursor: pointer;
+	}
+
+	/* Selection range */
+	.ac-timeline-container .ac-timeline-selection,
+	.ac-timeline-container .ac-timeline-selection-range {
+		position: absolute;
+		top: 0;
+		height: 100%;
+	}
+
+		.ac-timeline-container .ac-timeline-selection-range {
+			background: #70b37a;
+		}
+
+		[playhead-within-selection="false"] .ac-timeline-container .ac-timeline-selection-range {
+			background: #67986e;
+		}
+
+		.ac-timeline-container .ac-timeline-selection .ac-timeline-selection-anchor {
+			position: absolute;
+			top: -16px;
+			width: 24px;
+			height: 40px;
+		}
+
+			.ac-timeline-container .ac-timeline-selection .ac-timeline-selection-anchor[anchor-type="start"] {
+				left: -24px;
+				cursor: w-resize;
+			}
+
+			.ac-timeline-container .ac-timeline-selection .ac-timeline-selection-anchor[anchor-type="end"] {
+				right: -23px;
+				background-position: -48px 0;
+				cursor: e-resize;
+			}
+
+		.ac-timeline-container .ac-timeline-selection .ac-timeline-selection-anchor,
+		.ac-timeline-container .ac-timeline-thumb {
+			background-image: url(./images/AnalysisTools/ac-timeline.png);
+			background-repeat: no-repeat;
+		}
+
+/* Scrub time during drag */
+.ac-timeline-scrub-time {
+	position: absolute;
+	display: none;
+	height: 1px;
+	white-space: nowrap;
+}
+	.ac-timeline-scrub-time > div {
+		position: relative;
+		left: -50%;
+		top: -2em;
+		padding: 0.15em 0.45em;
+		color: #333;
+		background-color: #fff;
+		box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+		border-radius: 4px;
+		font-size: 14px;
+	}
+
+
+/*
+* Button switching for advanced tools
+*/
+
+.ac-video-controls-single .ac-video-buttons-left .ac-button-mute,
+.ac-video-controls-single .ac-video-buttons-left .ac-button-flip,
+.ac-video-controls-single .ac-video-buttons-left .ac-button-slowmotion,
+.ac-video-controls-single .ac-video-buttons-left .ac-button-loop,
+.ac-bothvideo-controls .ac-video-buttons-left .ac-button-slowmotion,
+.ac-bothvideo-controls .ac-video-buttons-left .ac-button-loop {
+	display: none;
+}
+.ac-video-controls-single[show-advanced-controls="true"] .ac-video-buttons-left .ac-button-mute,
+.ac-video-controls-single[show-advanced-controls="true"] .ac-video-buttons-left .ac-button-flip,
+.ac-video-controls-single[show-advanced-controls="true"] .ac-video-buttons-left .ac-button-slowmotion,
+.ac-video-controls-single[show-advanced-controls="true"] .ac-video-buttons-left .ac-button-loop,
+.ac-bothvideo-controls[show-advanced-controls="true"] .ac-video-buttons-left .ac-button-slowmotion,
+.ac-bothvideo-controls[show-advanced-controls="true"] .ac-video-buttons-left .ac-button-loop {
+	display: inline-block;
+}
+
+.ac-video-controls-single[show-advanced-controls="true"] .ac-timeline-container {
+	margin-left: 198px; 
+}
+
+.ac-bothvideo-controls[show-advanced-controls="true"] .ac-timeline-container {
+	margin-left: 120px;
+}
+
+.ac-leftvideo-controls .ac-timeline-container,
+.ac-rightvideo-controls .ac-timeline-container,
+.ac-bothvideo-controls .ac-timeline-container {
+	margin-right: 130px;
+}
+
+
+/* ---------------------------------------------
+* Draw, mode, view toolbars
+* ------------------------------------------- */
+
+.ac-toolbar-container {
+	padding: 4px;
+	margin: 8px;
+	background-color: white;
+	box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+}
+
+	.ac-toolbar-container .ac-mode-controls {
+		float: right;
+	}
+
+	.ac-toolbar-container .ac-sync-controls {
+		height: 35px; /* these buttons aren't as tall as the drawing ones */
+	}
+
+	.ac-toolbar-container .ac-sync-player-buttons,
+	.ac-toolbar-container .ac-sync-layout-buttons {
+		display: inline;
+	}
+
+/* ---------------------------------------------
+* Drawbar (replaces drawing tools bar)
+* ------------------------------------------- */
+
+.ac-drawbar {
+	display: inline-block;
+	width: 100%;
+	height: 35px;
+}
+
+	/* Actions section */
+	.ac-drawbar .ac-drawbar-actions {
+		float: left;
+	}
+
+	/*.ac-drawbar .ac-drawbar-tools {
+	*	margin-left: 105px;
+	}*/
+
+	.ac-drawbar .ac-drawbar-mru {
+		max-width: 100%;
+		white-space: nowrap;
+		overflow: hidden;
+	}
+
+.ac-drawbar-divider {
+	display: inline-block;
+}
+
+	.ac-drawbar-divider .lines {
+		position: relative;
+		display: inline-block;
+		top: 5px;
+		height: 18px;
+		/* border-left: 1px solid #555; */
+		border-right: 1px solid #A0A0A0;
+	}
+
+/* Frame around button for anchoring panel */
+.ac-drawbar .ac-drawbar-frame,
+.ac-mode-controls .ac-drawbar-frame {
+	position: relative;
+	display: inline-block;
+}
+
+/* Single button */
+button.ac-drawbar-button {
+	margin: 1px 2px;
+	padding: 0;
+	border: none;
+	background-color: transparent;
+	overflow: hidden;
+	vertical-align: middle;
+}
+
+/* Distribution of button states in sprite */
+.ac-drawbar-button,
+.ac-drawbar-menu-button {
+	display: inline-block;
+	width: 28px;
+	height: 28px;
+}
+
+button.ac-drawbar-button {
+	background: transparent;
+	fill: #333;
+}
+
+button.ac-drawbar-button[disabled] {
+	fill: #ddd;
+}
+
+button.ac-drawbar-button:hover:not([disabled]),
+button.ac-drawbar-menu-button:hover:not([disabled]) {
+	background-color: #eee;
+	fill: #5d6367;
+}
+
+button.ac-drawbar-button:active:not([disabled]),
+button.ac-drawbar-menu-button:active:not([disabled]) {
+	background-color: #5d6367;
+	fill: #30303e;
+}
+
+button.ac-drawbar-button.selected:not([disabled]) {
+	/* background-color: #d7d7df; */
+	border-radius: 2px;
+	box-shadow: 0 0 4px #000000a0 ;
+}
+
+button.ac-drawbar-menu-button {
+	background: transparent;
+	fill: #b7b7b8;
+	cursor: pointer;
+}
+
+button.ac-drawbar-menu-button.selected:not([disabled]) {
+	fill: #333;
+}
+
+/*
+* Tool selection panel
+*/
+.ac-drawbar-menu-anchor {
+	position: absolute;
+	width: 0;
+	height: 0;
+}
+
+.ac-drawbar-menu-align {
+	position: absolute;
+	right: -66px;
+	bottom: 10px;
+}
+
+.ac-drawbar-menu {
+	background: white;
+	border-radius: 4px;
+	box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.3);
+	font-size: 10px;
+}
+
+	.ac-drawbar-menu .ac-drawbar-menu-title {
+		position: relative;
+		background: #f5f5f5;
+		padding: 0.1em 0.2em;
+		text-align: center;
+		text-transform: uppercase;
+	}
+
+	.ac-drawbar-menu .ac-drawbar-menu-title .closePalette {
+		position: absolute;
+		right: 0;
+		top: 0;
+	}
+	.ac-drawbar-menu .ac-drawbar-menu-content {
+		padding: 10px;
+	}
+
+	.ac-drawbar-menu-align .ac-drawbar-winglet {
+		position: absolute;
+		right: 40px;
+		bottom: -16px;
+		border-top: 8px solid white;
+		border-right: 8px solid transparent;
+		border-bottom: 8px solid transparent;
+		border-left: 8px solid transparent;
+		pointer-events: none;
+	}
+
+.ac-drawbar-menu .tool-group-heading {
+	margin: 0.3em 0 0.1em 0;
+}
+
+.ac-drawbar-menu .tool-group {
+	white-space: nowrap;
+}
+
+	.ac-drawbar-menu .tool-group .separator {
+		padding: 0 0.2em;
+	}
+
+.ac-drawbar-menu-align[tool-anchor="More"] {
+	left: 0;
+	right: auto;
+}
+	.ac-drawbar-menu-align[tool-anchor="More"] .ac-drawbar-winglet {
+		left: 10px;
+		right: auto;
+	}
+
+	.ac-drawbar-menu .ac-drawbar-menu-button {
+		padding: 0;
+		/* color: #333; */
+		border: none;
+		/* background-color: #333; */
+		overflow: hidden;
+	}
+
+		.ac-drawbar-menu .ac-drawbar-menu-button.color > span,
+		.ac-drawbar-menu .ac-drawbar-menu-button.width > span {
+			display: block;
+		}
+		.ac-drawbar-menu .ac-drawbar-menu-button.color > span {
+			margin: -1px 1px 0 1px;
+			border-bottom: 25px solid;
+			border-radius: 3px;
+		}
+
+/* Dialog */
+
+.ac-drawdialog-anchor {
+	position: absolute;
+	left: 0;
+	top: 80px;
+	width: 100%;
+}
+
+.ac-drawdialog {
+	width: 360px;
+	margin: 0 auto;
+	border-radius: 8px;
+	background-color: #fff;
+	box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.5);
+	text-align: center;
+}
+
+	.ac-drawdialog .ac-drawdialog-head {
+		height: 24px;
+		margin: 1px;
+		background: #c3c3c3;
+		background: linear-gradient(to bottom, #d0d0d0 0%, #bababa 90%, #aeaeae 100%);
+		border-top-left-radius: 8px;
+		border-top-right-radius: 8px;
+	}
+
+	.ac-drawdialog .ac-drawdialog-content {
+		padding: 12px 18px;
+	}
+
+	.ac-drawdialog input[type=text].ac-drawdialog-input {
+		width: 50px;
+		text-align: right;
+	}
+
+	.ac-drawdialog .ac-drawdialog-buttons {
+		padding-top: 12px;
+	}
+
+
+/* -------------------------------
+*   Capture Button
+* ----------------------------- */
+.analysisCaptureButton {
+	position: relative;
+	display: inline-block;
+	width: 106px;
+	height: 72px;
+}
+
+	.analysisCaptureButton.decal {
+		background-image: url(./images/AnalysisCaptureButton.png);
+		background-repeat: no-repeat;
+	}
+
+	/* Decal full image of button overlayed onto background in Br modules */
+	.analysisCaptureButton .analysisCaptureDecal {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+	}
+
+	/* Area where image is shown*/
+	.analysisCaptureButton .analysisCaptureImage {
+		position: absolute;
+		left: 5%;
+		top: 5%;
+		width: 90%;
+		height: 67%;
+		line-height: 48px; /* for default 106 x 72px image */
+		text-align: center;
+	}
+
+		.analysisCaptureButton .analysisCaptureLabel {
+			position: relative;
+			top: 27%;
+			color: #555;
+			font-size: 13px;
+			font-weight: bold;
+			text-shadow: -2px -1px 3px rgba(255, 255, 255, 1.0);
+			pointer-events: none;
+		}
+
+		.analysisCaptureButton.hasProgressImage .analysisCaptureLabel,
+		.analysisCaptureButton.hasImage .analysisCaptureLabel {
+			display: none;
+		}
+
+		.analysisCaptureButton .analysisCaptureImage > img {
+			position: relative;
+			top: -1px;
+			max-width: 100%;
+			max-height: 100%;
+			vertical-align: middle;
+		}
+
+		.analysisCaptureButton.hasProgressImage .analysisCaptureImage {
+			background-image: url(./images/LoadingSprite.gif);
+			background-repeat: no-repeat;
+			background-position: center;
+		}
+
+			.analysisCaptureButton.hasProgressImage .analysisCaptureImage > img {
+				display: none;
+			}
+
+	.analysisCaptureButton .analysisCaptureFull,
+	.analysisCaptureButton .analysisCaptureRegion {
+		position: absolute;
+		top: 76%;
+		height: 23%;
+		width: 48%;
+		border: none;
+		background: transparent;
+		background-image: url(//); /* IE9 hack to make transparent button clickable */
+		cursor: pointer;
+	}
+	.analysisCaptureButton .analysisCaptureFull {
+		left: 0;
+	}
+	.analysisCaptureButton .analysisCaptureRegion {
+		left: 52%;
+	}
+
+
+/*
+* Zoom buttons in dual mode
+*/
+.ac-panel-zoom-button {
+	position: absolute;
+	padding: 0;
+	border: none;
+	background-color: transparent;
+}
+
+.ac-viewleft .ac-panel-zoom-button.ac-button-zoom-in,
+.ac-viewleft .ac-panel-zoom-button.ac-button-zoom-out {
+	left: 4px;
+}
+
+.ac-viewright .ac-panel-zoom-button.ac-button-zoom-in,
+.ac-viewright .ac-panel-zoom-button.ac-button-zoom-out {
+	right: 4px;
+}
+
+.ac-viewleft .ac-panel-zoom-button.ac-button-zoom-in,
+.ac-viewright .ac-panel-zoom-button.ac-button-zoom-in {
+	top: 4px;
+}
+
+.ac-viewleft .ac-panel-zoom-button.ac-button-zoom-out,
+.ac-viewright .ac-panel-zoom-button.ac-button-zoom-out {
+	top: 32px;
+}
+
+.analysisControl[analysis-type="webgl"] .ac-viewwrapper[data-state="loading"]:after {
+	content: " ";
+	position: absolute;
+	top: 40%;
+	left: 50%;
+	width: 32px;
+	height: 32px;
+	margin: -16px;
+	background-image: url(./images/LoadingSprite.gif);
+}
