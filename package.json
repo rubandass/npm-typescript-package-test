@@ -2,23 +2,23 @@
   "name": "npm-typescript-package-test",
   "version": "1.0.8",
   "description": "typescript package",
-  "main": "src/index.ts",
+  "main": "./lib/cjs/index.js",
+  "module": "./lib/esm/index.js",
+  "types": "./lib/esm/index.d.ts",
   "files": [
-    "src/**/*"
+    "/lib"
   ],
-  "directories": {
-    "src": "src"
-  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc"
+    "build": "npm run build:esm && npm run build:cjs",
+    "build:esm": "tsc",
+    "build:cjs": "tsc --module commonjs --outDir lib/cjs"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rubandass/npm-typescript-package-test.git"
   },
   "keywords": [
-    "typescript\"\u001b[1;5D\u001b[1;5D\u001b[1;5D\u001b[1;5D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\"\u001b[F\u001b[B\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[C\u001b[D\u001b[D\u001b[Dtypescript\""
+    "typescript"
   ],
   "author": "Ruban",
   "license": "ISC",
@@ -35,5 +35,9 @@
     "@tsconfig/recommended": "^1.0.1",
     "@types/node": "^17.0.38",
     "@types/react": "^16.9.32"
+  },
+  "peerDependencies": {
+    "react": "^16.9.32",
+    "react-dom": "^16.8.0"
   }
 }
