@@ -1,0 +1,16 @@
+{
+    "extends": "@tsconfig/recommended/tsconfig.json",
+    "compilerOptions": { 
+        "jsx": "preserve",
+        "target": "es6", 
+        "module": "commonjs",
+        "strict": true, 
+        "declaration": true,
+        "outDir": "./dist"
+      },
+      "exclude": [
+          "tests",
+          "dist",
+          "node_modules"
+      ]
+  }
