@@ -2,11 +2,7 @@ import { TextField, Button, Grid } from "@material-ui/core";
 import AlertDialog from "./AlertDialog";
 import React, { ChangeEvent, useState } from "react";
 
-interface GreeterProps {
-  name?: string;
-}
-
-const Greeter = (props: GreeterProps) => {
+const Greeter = () => {
   const [textFiledValue, setTextFieldValue] = useState<string>("");
   const [showAlert, setShowAlert] = useState(false);
 
